@@ -1,0 +1,202 @@
+{
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "The purpose of this documentation is to provide vehicle visibility via APIs",
+    "title": "Visibility API Documentation",
+    "contact": {
+      "name": "Numadic",
+      "email": "help@numadic.com"
+    },
+    "version": "1.0.0"
+  },
+  "host": "api.numadic.com",
+  "paths": {
+    "/client/v1/lanes/speed": {
+      "get": {
+        "description": "To view speed between two consicutive toll plazas. Output will be given in percentile distribution.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Lanes"
+        ],
+        "summary": "To view speed between two consicutive toll plazas.",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Authorization token provided by Numadic. Append token with \"bearer \"",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "origin plaza ID",
+            "name": "origin_toll",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "destination plaza ID",
+            "name": "destination_toll",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "time in format HH:MM:SS for which the speed percentile is required",
+            "name": "time",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/getLaneSpeed"
+          },
+          "400": {
+            "description": "Invalid Parameter"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/client/v1/lanes/duration": {
+      "get": {
+        "description": "To view time taken(duration) between two consicutive toll plazas. Output will be given in percentile distribution.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Lanes"
+        ],
+        "summary": "To view the time taken(duration) between two consicutive toll plazas.",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Authorization token provided by Numadic. Append token with \"bearer \"",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "origin plaza ID",
+            "name": "origin_toll",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "destination plaza ID",
+            "name": "destination_toll",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "time in format HH:MM:SS for which the duration percentile is required",
+            "name": "time",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/getLaneDuration"
+          },
+          "400": {
+            "description": "Invalid Parameter"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "LaneSpeed": {
+      "type": "object",
+      "properties": {
+        "pointa": {
+          "description": "Origin Toll Plaza ID",
+          "type": "string"
+        },
+        "pointb": {
+          "description": "Destination Toll Plaza ID",
+          "type": "string"
+        },
+        "percentile_25": {
+          "type": "string"
+        },
+        "percentile_50": {
+          "type": "string"
+        },
+        "percentile_75": {
+          "type": "string"
+        },
+        "percentile_90": {
+          "type": "string"
+        },
+        "hour": {
+          "type": "string"
+        }
+      }
+    },
+    "LaneDuration": {
+      "type": "object",
+      "properties": {
+        "pointa": {
+          "description": "Origin Toll Plaza ID",
+          "type": "string"
+        },
+        "pointb": {
+          "description": "Destination Toll Plaza ID",
+          "type": "string"
+        },
+        "percentile_25": {
+          "type": "string"
+        },
+        "percentile_50": {
+          "type": "string"
+        },
+        "percentile_75": {
+          "type": "string"
+        },
+        "percentile_90": {
+          "type": "string"
+        },
+        "hour": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "getLaneSpeed": {
+      "description": "The success Response after calling /client/v1/lanes-speed API Get\nstatus Code 200",
+      "schema": {
+        "$ref": "#/definitions/LaneSpeed"
+      }
+    },
+    "getLaneDuration": {
+      "description": "The success Response after calling /client/v1/lanes-duration API Get\nstatus Code 200",
+      "schema": {
+        "$ref": "#/definitions/LaneDuration"
+      }
+    }
+  }
+}
