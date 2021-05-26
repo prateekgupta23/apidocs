@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "description": "This is a sandbox server for Hemica APIs. Build financial and logistics solutions on top of the FAStag protocol.  You can find out more about Hemica at [http://hemica.com](http://hemica.com).  For the sandbox, you can use the api key `special-key` to test the authorization filters.",
     "version": "1.0.5",
     "title": "Hemica API Docs",
     "termsOfService": "https://hemica.com/terms/",
@@ -45,63 +45,76 @@
     "/customer/transactions/credit": {
       "post": {
         "tags": [
-          "pet"
+          "credit"
         ],
-        "summary": "uploads an image",
-        "description": "",
-        "operationId": "uploadFile",
+        "summary": "TAG ACCOUNT CREDIT TRANSACTIONS",
+        "description": "This API method returns the Credit transactions\\Recharge details for the requested\nCustomer ID and Vehicle number in a given duration.\nThe details can be requested only for a single vehicle number.",
+        "operationId": "CreditTxn",
         "consumes": [
-          "multipart/form-data"
+          "application/json"
         ],
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "petId",
-            "in": "path",
-            "description": "ID of pet to update",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "additionalMetadata",
-            "in": "formData",
-            "description": "Additional data to pass to server",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "file",
-            "in": "formData",
-            "description": "file to upload",
-            "required": false,
-            "type": "file"
+            "Customer Id": 10014151,
+            "VehicleNumber":"TN37CF2388",
+            "FromDate":"2017-08-01",
+            "ToDate":"2017-08-12"
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "CustomerId": 10005413,
+            "CreditTransactionDetails": [
+              {
+                "DateOfTransaction": "2017-08-03T15:42:18.097+05:30",
+                "Amount": 50000,
+                "TypeOfTransaction": "ADJUSTMENTS",
+                "VehicleNumber": "TN37CF2388"
+              },
+              {
+                "DateOfTransaction": "2017-08-01T12:43:08.647+05:30",
+                "Amount": 55,
+                "TypeOfTransaction": "UPIPAYMENTS",
+                "VehicleNumber": "TN37CF2388"
+              },
+              {
+                "DateOfTransaction": "2017-08-03T15:46:21.197+05:30",
+                "Amount": 20,
+                "TypeOfTransaction": "RIBPAYMENTS",
+                "VehicleNumber": "TN37CF2388"
+              },
+              {
+                "DateOfTransaction": "2017-08-01T17:49:50.227+05:30",
+                "Amount": 1000,
+                "TypeOfTransaction": "CIBPAYMENTS",
+                "VehicleNumber": "TN37CF2388"
+              },
+              {
+                "DateOfTransaction": "2017-08-03T15:25:19.970+05:30",
+                "Amount": 500,
+                "TypeOfTransaction": "EPayments",
+                "VehicleNumber": "TN37CF2388"
+              }
+            ],
             "schema": {
               "$ref": "#/definitions/ApiResponse"
             }
-          }
-        },
+          },
         "security": [
           {
             "petstore_auth": [
-              "write:pets",
-              "read:pets"
+              "read:txn"
             ]
           }
         ]
-      }
-    },
+      },
     "/recharge": {
       "post": {
         "tags": [
-          "pet"
+          "recharge"
         ],
         "summary": "Add a new pet to the store",
         "description": "",
@@ -246,12 +259,11 @@
         "tags": [
           "pet"
         ],
-        "summary": "Finds Pets by tags",
+        "summary": "get total toll cost for a route",
         "description": "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
-        "operationId": "findPetsByTags",
+        "operationId": "CalcolateTollCost",
         "produces": [
-          "application/json",
-          "application/xml"
+          "application/json"
         ],
         "parameters": [
           {
@@ -622,7 +634,7 @@
     }
   },
   "externalDocs": {
-    "description": "Find out more about Hemica",
+    "description": "Find out m ore about Hemica",
     "url": "http://hemica.com"
   }
 }
