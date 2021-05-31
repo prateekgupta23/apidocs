@@ -1,553 +1,307 @@
-
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
-    "version": "1.0.5",
-    "title": "Hemica API Docs",
-    "termsOfService": "https://hemica.com/terms/",
+    "version": "1.0.0",
+    "title": "NUMADIC ICICI FASTAG API DOCUMENTATION",
+    "termsOfService": "http://swagger.io/terms/",
     "contact": {
-      "email": "developers@hemica.com"
+      "email": "apiteam@swagger.io"
     },
     "license": {
       "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      "url": "https://api.numadic.com/"
     }
   },
-  "host": "api.hemica.com",
-  "basePath": "/v1",
+  "host": "api.numadic.com",
+  "basePath": "/v2",
   "tags": [
     {
-      "name": "Vehicles",
-      "description": "Everything about your Vehicles",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": "https://hemica.io"
-      }
-    },
-    {
-      "name": "Customers",
-      "description": "Access to a FASTag Wallet"
-    },
-    {
-      "name": "Toll",
-      "description": "Operations about Vehicles",
-      "externalDocs": {
-        "description": "Find out more about Hemica",
-        "url": "https://hemica.com"
-      }
+      "name": "user",
+      "description": "APIs"
     }
   ],
   "schemes": [
-    "https",
     "http"
   ],
   "paths": {
-    "/customer/transactions/credit": {
-      "post": {
+    "/client/v1/icici/fastag/transfer-balance": {
+      "get": {
         "tags": [
-          "pet"
+          "user"
         ],
-        "summary": "TAG ACCOUNT CREDIT TRANSACTIONS",
-        "description": "This API method returns the Credit transactions Recharge details for the requested, Customer ID and Vehicle number in a given duration.The details can be requested only for a single vehicle number.",
-        "operationId": "uploadFile",
-        "consumes": [
-          "multipart/form-data"
-        ],
+        "summary": "This API method is used to recharge the vehicle(s) by Customer using the CUG Wallet Balance. If Customer requested Recharge for one or more vehicle, Recharge will be initiated if the Total Recharge amount of all the requested vehicles is less than or equal to the available CUG Wallet Balance amount of the Customer, then the recharge request of each vehicle will be sent to processing queue for CUG Wallet Balance transfer. If the Total Recharge amount is greater than the available CUG Wallet balance amount, the recharge request is completely rejected. Customer has to send a new request with a modified recharge limit.",
+        "description": "",
+        "operationId": "loginUser",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "Customer Id",
-            "in": "formData",
-            "description": "ID of customer to update",
+            "name": "CustomerID",
+            "in": "query",
+            "description": "Customer ID of the Corporate Customer",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "integer"
           },
           {
-            "name": "VehicleNumber",
-            "in": "formData",
-            "description": "Additional data to pass to server",
+            "name": "RechargeDetails",
+            "in": "query",
+            "description": "Collection of Vehicle numbers Can be requested up to a maximum of 10. If invalid or unknown vehicle numbers are provided in the request, it will not recharge for the entire request. For Recharge Customer ID, Vehicle number(s), Amount(s) are mandatory.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "RechargeDetailsVehicleNumber",
+            "in": "query",
+            "description": "Vehicle number for the recharge to be initiated.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "RechargeDetailsRechargeAmount",
+            "in": "query",
+            "description": "Amount to be recharged for the vehicle.",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "CustomerID": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Customer ID of corporate customer"
+              },
+              "RechargeDetails": {
+                "type": "string",
+                "format": "str",
+                "description": "Contains Collection of Vehicle Recharge details that need to be returned for the requested recharges."
+              },
+              "VehicleRechargeDetailsReason": {
+                "type": "string",
+                "format": "str",
+                "description": "Reason in case if the recharge request is rejected.Empty if request is successfully accepted for processing."
+              },
+              "VehicleRechargeDetailsRechargeStatus": {
+                "type": "string",
+                "format": "str",
+                "description": "Returns Recharge status message."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/client/v1/icici/fastag/transaction/toll": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "This API method returns the transaction details of the requested vehicle number of a Customer for the given duration. This API request accepts only a single vehicle number to return the Transaction details.",
+        "description": "",
+        "operationId": "loginUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Customer ID",
+            "in": "query",
+            "description": "Customer ID of the Corporate Customer",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Vehicle Number",
+            "in": "query",
+            "description": "Specifies Vehicle number",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "StartTransactionDate",
+            "in": "query",
+            "description": "Start date of the duration for requesting the transactions dated number - Mandatory and should be send in ISO8601 format. Transaction details can be retrieved for a maximum of past 40 days. Start Transaction Date should be less than or equal to that of today’s date.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "EndTransactionDate",
+            "in": "query",
+            "description": "End date of the duration for requesting the transaction dated to, Date should be send in ISO8601format. End date should not be future date.",
             "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "Customer ID": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Customer ID of corporate customer"
+              },
+              "TransactionDetails": {
+                "type": "string",
+                "format": "str",
+                "description": "Contains collection of Transaction details that needs to be returned for the requested vehicle number and duration in the request."
+              },
+              "TransactionDetails TransactionId": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Transaction ID of the transaction."
+              },
+              "TransactionDetails PlazaName": {
+                "type": "string",
+                "format": "str",
+                "description": "Plaza name of the transaction."
+              },
+              "TransactionDetails TransactionAmount": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Transaction Amount."
+              },
+              "TransactionDetails TransactionDateTime": {
+                "type": "string",
+                "format": "str",
+                "description": "Date time of transaction. Returns in ISO 8601 date format"
+              },
+              "TransactionDetails ProcessingDateTime": {
+                "type": "string",
+                "format": "str",
+                "description": "Processed date time of the transaction. Returns in ISO 8601 date format"
+              },
+              "TransactionDetails TransactionReferenceNumber": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Reference number of the transaction."
+              },
+              "TransactionDetails TransactionStatus": {
+                "type": "string",
+                "format": "str",
+                "description": "Status of the Transaction."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/client/v1/icici/fastag/transaction/credit": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "This API method returns the Credit transactions/Recharge details for the requested Customer ID and Vehicle number in a given duration.The details can be requested only for a single vehicle number.",
+        "description": "",
+        "operationId": "loginUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "VehicleNumber",
+            "in": "query",
+            "description": "Vehicle number. If invalid or unknown vehicle number is provided in the request, it will not return any response. To get recharge balance details both Customer ID and Vehicle number are mandatory.",
+            "required": true,
             "type": "string"
           },
           {
             "name": "FromDate",
-            "in": "formData",
-            "description": "start date of teansaction",
-            "required": false,
+            "in": "query",
+            "description": "Starting date of the duration to get the recharge orcedit transaction details-Credit transaction start date. Date format should be in ISO8601 format. Transaction details can be retrieved for a maximum of past 40 days. Date should be less than or equal to that of today’s date.",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "TomDate",
-            "in": "formData",
-            "description": "end date of teansaction",
-            "required": false,
+            "name": "ToDate",
+            "in": "query",
+            "description": "End date of the duration to get the recharge details-transaction date. Date format should be in ISO8601 format. Should not be greater than today’s date.",
+            "required": true,
             "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "CustomerId": 10005413,
-            "CreditTransactionDetails": [
-              {
-                "DateOfTransaction": "2017-08-03T15:42:18.097+05:30",
-                "Amount": 50000,
-                "TypeOfTransaction": "ADJUSTMENTS",
-                "VehicleNumber": "TN37CF2388"
-              },
-              {
-                "DateOfTransaction": "2017-08-01T12:43:08.647+05:30",
-                "Amount": 55,
-                "TypeOfTransaction": "UPIPAYMENTS",
-                "VehicleNumber": "TN37CF2388"
-              },
-              {
-                "DateOfTransaction": "2017-08-03T15:46:21.197+05:30",
-                "Amount": 20,
-                "TypeOfTransaction": "RIBPAYMENTS",
-                "VehicleNumber": "TN37CF2388"
-              },
-              {
-                "DateOfTransaction": "2017-08-01T17:49:50.227+05:30",
-                "Amount": 1000,
-                "TypeOfTransaction": "CIBPAYMENTS",
-                "VehicleNumber": "TN37CF2388"
-              },
-              {
-                "DateOfTransaction": "2017-08-03T15:25:19.970+05:30",
-                "Amount": 500,
-                "TypeOfTransaction": "EPayments",
-                "VehicleNumber": "TN37CF2388"
-              }
-            ],
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/ApiResponse"
-            }
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "read:recharge",
-              "read:txn"
-            ]
-          }
-        ]
-      }
-    },
-    "/recharge": {
-      "post": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Add a new pet to the store",
-        "description": "",
-        "operationId": "addPet",
-        "consumes": [
-          "application/json",
-          "application/xml"
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Pet object that needs to be added to the store",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          }
-        ],
-        "responses": {
-          "405": {
-            "description": "Invalid input"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "read:recharge",
-              "read:txn"
-            ]
-          }
-        ]
-      },
-      "put": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Update an existing pet",
-        "description": "",
-        "operationId": "updatePet",
-        "consumes": [
-          "application/json",
-          "application/xml"
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Pet object that needs to be added to the store",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "read:recharge",
-              "read:txn"
-            ]
-          }
-        ]
-      }
-    },
-    "/customers/transaction": {
-      "get": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Finds Pets by status",
-        "description": "Multiple status values can be provided with comma separated strings",
-        "operationId": "findPetsByStatus",
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Status values that need to be considered for filter",
-            "required": true,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "available",
-                "pending",
-                "sold"
-              ],
-              "default": "available"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Pet"
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid status value"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "read:recharge",
-              "read:txn"
-            ]
-          }
-        ]
-      }
-    },
-    "/vehicles/toll": {
-      "get": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Finds Pets by tags",
-        "description": "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
-        "operationId": "findPetsByTags",
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [
-          {
-            "name": "tags",
-            "in": "query",
-            "description": "Tags to filter by",
-            "required": true,
-            "type": "array",
-            "items": {
               "type": "string"
             },
-            "collectionFormat": "multi"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Pet"
+            "headers": {
+              "CustomerID": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Customer ID"
+              },
+              "CreditTransactionDetails": {
+                "type": "string",
+                "format": "str",
+                "description": "Contains Collection of credit transaction details that need to be returned for the requested vehicle numbers in the request."
+              },
+              "CreditTransactionDetails - VehicleNumber": {
+                "type": "string",
+                "format": "str",
+                "description": "Vehicle number"
+              },
+              "CreditTransactionDetails - Amount": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Returns Recharge status message."
+              },
+              "CreditTransactionDetails - DateOfTransaction": {
+                "type": "string",
+                "format": "str",
+                "description": "Date of credit transaction. Returns in ISO 8601 date format"
               }
             }
           },
           "400": {
-            "description": "Invalid tag value"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "read:recharge",
-              "read:txn"
-            ]
-          }
-        ],
-        "deprecated": true
-      }
-    },
-    "/vehicles/locations": {
-      "get": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Find pet by ID",
-        "description": "Returns a single pet",
-        "operationId": "getPetById",
-         "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "formData",
-            "description": "ID of pet to return",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
+            "description": "Bad Request"
           },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
+          "500": {
+            "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "pet"
-        ],
-        "summary": "Updates a pet in the store with form data",
-        "description": "",
-        "operationId": "updatePetWithForm",
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "formData",
-            "description": "ID of pet that needs to be updated",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "name",
-            "in": "formData",
-            "description": "Updated name of the pet",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "status",
-            "in": "formData",
-            "description": "Updated status of the pet",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "405": {
-            "description": "Invalid input"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "read:recharge",
-              "read:txn"
-            ]
-          }
-        ]
+        }
       }
     }
   },
   "securityDefinitions": {
+    "petstore_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:pets": "modify pets in your account",
+        "read:pets": "read your pets"
+      }
+    },
     "api_key": {
       "type": "apiKey",
       "name": "api_key",
       "in": "header"
-    },
-    "petstore_auth": {
-      "type": "oauth2",
-      "authorizationUrl": "https://api.hemica.com/oauth/authorize",
-      "flow": "implicit",
-      "scopes": {
-        "read:txn": "read your debit transactions",
-        "read:recharge": "read your credit transactions"
-      }
     }
   },
   "definitions": {
-    "ApiResponse": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "CustomerId": {
-          "type": "string"
-        },
-        "CreditTransactionDetails": {
-          "type": "string"
-        }
-      }
-    },
-    "Category": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "xml": {
-        "name": "Category"
-      }
-    },
-    "Pet": {
-      "type": "object",
-      "required": [
-        "CustomerId",
-        "photoUrls"
-      ],
-      "properties": {
-        "CustomerId": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "category": {
-          "$ref": "#/definitions/Category"
-        },
-        "name": {
-          "type": "string",
-          "example": "doggie"
-        },
-        "CreditTransactionDetails": {
-          "type": "array",
-          "xml": {
-            "wrapped": true
-          },
-          "items": {
-            "type": "string",
-            "xml": {
-              "name": "photoUrl"
-            }
-          }
-        },
-        "tags": {
-          "type": "array",
-          "xml": {
-            "wrapped": true
-          },
-          "items": {
-            "xml": {
-              "name": "tag"
-            },
-            "$ref": "#/definitions/Tag"
-          }
-        },
-        "status": {
-          "type": "string",
-          "description": "pet status in the store",
-          "enum": [
-            "available",
-            "pending",
-            "sold"
-          ]
-        }
-      },
-      "xml": {
-        "name": "Pet"
-      }
-    },
-    "Tag": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "xml": {
-        "name": "Tag"
-      }
-    },
     "Order": {
       "type": "object",
       "properties": {
@@ -577,11 +331,27 @@
           ]
         },
         "complete": {
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         }
       },
       "xml": {
         "name": "Order"
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "Category"
       }
     },
     "User": {
@@ -618,10 +388,92 @@
       "xml": {
         "name": "User"
       }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "Tag"
+      }
+    },
+    "Pet": {
+      "type": "object",
+      "required": [
+        "name",
+        "photoUrls"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
+        },
+        "name": {
+          "type": "string",
+          "example": "doggie"
+        },
+        "photoUrls": {
+          "type": "array",
+          "xml": {
+            "name": "photoUrl",
+            "wrapped": true
+          },
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "xml": {
+            "name": "tag",
+            "wrapped": true
+          },
+          "items": {
+            "$ref": "#/definitions/Tag"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "pet status in the store",
+          "enum": [
+            "available",
+            "pending",
+            "sold"
+          ]
+        }
+      },
+      "xml": {
+        "name": "Pet"
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
     }
   },
   "externalDocs": {
-    "description": "Find out more about Hemica",
-    "url": "http://hemica.com"
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
   }
 }
